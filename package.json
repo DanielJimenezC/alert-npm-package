@@ -1,0 +1,14 @@
+{
+  "name": "dj-alert",
+  "version": "1.0.0",
+  "description": "Fancy alerts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Alerts"
+  ],
+  "author": "Daniel Jimenez",
+  "license": "ISC"
+}
