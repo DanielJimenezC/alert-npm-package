@@ -4,14 +4,14 @@ import './style.css'
 
 const DEFAULT_VALUES = {
   autoClose: 5000,
-  bgDarkMode: false,
-  bgStatus: 'success',
-  bgStatusColor: null,
+  darkMode: false,
+  status: 'success',
+  backgroundColor: null,
   canClose: true,
   icon: null,
-  loadingBar: false,
   message: 'Example message',
   position: 'top-right',
+  showProgress: true,
 }
 
 export class Toast {
@@ -21,18 +21,25 @@ export class Toast {
   #darkModeValue
   #noHaveError
   #iconElement
+  #visibleTimeSince
+  #autoClose
+  #progressInterval
+  #autoCloseInterval
 
   constructor() { 
     this.#toastElement = document.createElement('div')
     this.#noHaveError = true
+    this.#visibleTimeSince = new Date()
   }
 
   set autoClose(value) {
+    this.#autoClose = value
     if (value === false) return
-    setTimeout(() => { this.remove() }, value)
+    if (this.#autoCloseInterval != null) clearTimeout(this.#autoCloseInterval)
+    this.#autoCloseInterval = setTimeout(() => { this.remove() }, value)
   }
 
-  set bgDarkMode(value) {
+  set darkMode(value) {
     this.#darkModeValue = value
     if (value)
       this.#toastElement.classList.add('dark')
@@ -40,7 +47,7 @@ export class Toast {
       this.#toastElement.classList.add('light')
   }
 
-  set bgStatus(value) {
+  set status(value) {
     try {
       this.#statusValue = value
       validateStatus(value)
@@ -58,7 +65,7 @@ export class Toast {
     }
   }
 
-  set bgStatusColor(value) {
+  set backgroundColor(value) {
     try {
       if(value == null || value == '' || this.#statusValue != 'none')
         return
@@ -68,9 +75,9 @@ export class Toast {
       let root = document.querySelector(':root')
       root.style.setProperty('--toast-bg-color-hover', value)
       if (this.#darkModeValue)
-        root.style.setProperty('--toast-bg-color', calcHSL(value, true))
+        root.style.setProperty('--toast-bg-color', calcHSL(value, true, textColor))
       else
-        root.style.setProperty('--toast-bg-color', calcHSL(value, false))
+        root.style.setProperty('--toast-bg-color', calcHSL(value, false, textColor))
     } catch (error) {
       console.error(error)
       this.#noHaveError = false
@@ -129,16 +136,48 @@ export class Toast {
     }
   }
 
+  set showProgress(value) {
+    let bgColor
+    this.#toastElement.classList.toggle('progress', value)
+    this.#toastElement.style.setProperty('--progress', 1)
+    
+    if (this.#statusValue === 'none')
+      bgColor = getComputedStyle(this.#toastElement).getPropertyValue('--toast-bg-color-hover');
+    else if (this.#statusValue === 'success' & this.#darkModeValue)
+      bgColor = '#34884f'
+    else if (this.#statusValue === 'success' & !this.#darkModeValue)
+      bgColor = '#54c477'
+    else if (this.#statusValue === 'warning' & this.#darkModeValue)
+      bgColor = '#be802a'
+    else if (this.#statusValue === 'warning' & !this.#darkModeValue)
+      bgColor = '#EEC476'
+    else if (this.#statusValue === 'danger' & this.#darkModeValue)
+      bgColor = '#AD3939'
+    else if (this.#statusValue === 'danger' & !this.#darkModeValue)
+      bgColor = '#E68686'
+
+    this.#toastElement.style.setProperty('--progress-bg', bgColor)
+    if (value) {
+      this.#progressInterval = setInterval(() => {
+        const timeVisible = new Date() - this.#visibleTimeSince
+        this.#toastElement.style.setProperty('--progress', 1 - timeVisible / this.#autoClose)
+      }, 10)
+    }
+  }
+
   show(options) {
     this.#toastElement.classList.add('toast')
     requestAnimationFrame(() => { this.#toastElement.classList.add('show') })
     this.#removeBinded = () => this.remove()
     Object.entries({ ...DEFAULT_VALUES, ...options }).forEach(([key, value]) => {
+      console.log('key:',key,'-value:',value)
       this[key] = value
     })
   }
 
   remove() {
+    clearTimeout(this.#autoCloseInterval)
+    clearInterval(this.#progressInterval)
     const toastContainer = this.#toastElement.parentElement
     this.#toastElement.classList.add('close')
     this.#toastElement.addEventListener('transitionend', () => {
@@ -192,7 +231,7 @@ function getTextColor(bgColor) {
   return (l > 0.179) ? '#2D3748' : '#EDF2F7'
 }
 
-function calcHSL(bgColor, darkMode) {
+function calcHSL(bgColor, darkMode, textColor) {
   let color = getRBGColor(bgColor)
   color.r /= 255
   color.g /= 255
@@ -225,9 +264,13 @@ function calcHSL(bgColor, darkMode) {
 
   if (darkMode)
     l = (l - 10) < 0 ? 0 : l - 10
-  else 
-    l = (l + 45) > 90 ? 90 : l + 45
-
+  else {
+    if (textColor == '#EDF2F7')
+      l = (l + 38) > 62 ? 62 : l + 38
+    else 
+      l = (l + 38) > 90 ? 90 : l + 38
+  }
+    
   return 'hsl(' + h + ',' + s + '%,' + l + '%)'
 }
 
