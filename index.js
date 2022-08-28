@@ -15,6 +15,12 @@ const DEFAULT_VALUES = {
 }
 
 export class Toast {
+  show(options) {
+    new ToastAlert(options);
+  }
+}
+
+class ToastAlert {
   #toastElement
   #removeBinded
   #statusValue
@@ -26,17 +32,23 @@ export class Toast {
   #progressInterval
   #autoCloseInterval
 
-  constructor() { 
+  constructor(options) { 
     this.#toastElement = document.createElement('div')
     this.#noHaveError = true
     this.#visibleTimeSince = new Date()
+    this.#toastElement.classList.add('toast')
+    requestAnimationFrame(() => { this.#toastElement.classList.add('show') })
+    this.#removeBinded = () => this.#remove()
+    Object.entries({ ...DEFAULT_VALUES, ...options }).forEach(([key, value]) => {
+      this[key] = value
+    })
   }
 
   set autoClose(value) {
     this.#autoClose = value
     if (value === false) return
     if (this.#autoCloseInterval != null) clearTimeout(this.#autoCloseInterval)
-    this.#autoCloseInterval = setTimeout(() => { this.remove() }, value)
+    this.#autoCloseInterval = setTimeout(() => { this.#remove() }, value)
   }
 
   set darkMode(value) {
@@ -111,7 +123,7 @@ export class Toast {
       this.#iconElement = iconToast
     }
     else if (this.#statusValue === 'none') {
-      if(value != null || value == '') {
+      if(value) {
         let arrayClases = value.split(' ')
         for(let i = 0; i < arrayClases.length; i++){
           iconToast.classList.add(arrayClases[i])
@@ -165,17 +177,7 @@ export class Toast {
     }
   }
 
-  show(options) {
-    this.#toastElement.classList.add('toast')
-    requestAnimationFrame(() => { this.#toastElement.classList.add('show') })
-    this.#removeBinded = () => this.remove()
-    Object.entries({ ...DEFAULT_VALUES, ...options }).forEach(([key, value]) => {
-      console.log('key:',key,'-value:',value)
-      this[key] = value
-    })
-  }
-
-  remove() {
+  #remove() {
     clearTimeout(this.#autoCloseInterval)
     clearInterval(this.#progressInterval)
     const toastContainer = this.#toastElement.parentElement
