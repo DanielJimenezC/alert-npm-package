@@ -36,8 +36,8 @@ class ToastAlert {
     this.#toastElement = document.createElement('div')
     this.#noHaveError = true
     this.#visibleTimeSince = new Date()
-    this.#toastElement.classList.add('toast')
-    requestAnimationFrame(() => { this.#toastElement.classList.add('show') })
+    this.#toastElement.classList.add('makki-toast')
+    requestAnimationFrame(() => { this.#toastElement.classList.add('makki-show') })
     this.#removeBinded = () => this.#remove()
     Object.entries({ ...DEFAULT_VALUES, ...options }).forEach(([key, value]) => {
       this[key] = value
@@ -54,9 +54,9 @@ class ToastAlert {
   set darkMode(value) {
     this.#darkModeValue = value
     if (value)
-      this.#toastElement.classList.add('dark')
+      this.#toastElement.classList.add('makki-dark-toast')
     else 
-      this.#toastElement.classList.add('light')
+      this.#toastElement.classList.add('makki-light-toast')
   }
 
   set status(value) {
@@ -64,13 +64,13 @@ class ToastAlert {
       this.#statusValue = value
       validateStatus(value)
       if (value === 'success')
-        this.#toastElement.classList.add('success')
+        this.#toastElement.classList.add('makki-success')
       else if (value === 'warning')
-        this.#toastElement.classList.add('warning')
+        this.#toastElement.classList.add('makki-warning')
       else if (value === 'danger')
-        this.#toastElement.classList.add('danger')
+        this.#toastElement.classList.add('makki-danger')
       else if (value === 'none')
-        this.#toastElement.classList.add('none')
+        this.#toastElement.classList.add('makki-none')
     } catch (error) {
       console.error(error)
       this.#noHaveError = false
@@ -78,18 +78,27 @@ class ToastAlert {
   }
 
   set backgroundColor(value) {
+    let hexColor
     try {
       if(value == null || value == '' || this.#statusValue != 'none')
         return
       validateBackgroundColor(value)
-      let textColor = getTextColor(value)
-      this.#toastElement.style.color = textColor
       let root = document.querySelector(':root')
-      root.style.setProperty('--toast-bg-color-hover', value)
+      root.style.setProperty('--makki-toast-bg-color-hover', value)
+
       if (this.#darkModeValue)
-        root.style.setProperty('--toast-bg-color', calcHSL(value, true, textColor))
+        hexColor = calcHexColor(value, true)
       else
-        root.style.setProperty('--toast-bg-color', calcHSL(value, false, textColor))
+        hexColor = calcHexColor(value, false)
+      
+      root.style.setProperty('--makki-toast-bg-color', hexColor)
+      let textColor = getTextColor(hexColor)
+      this.#toastElement.style.color = textColor
+
+      const textColorHover = getTextColor(value)
+      console.log(textColorHover)
+      this.#toastElement.style.setProperty('--makki-toast-bg-color-text', textColorHover)
+
     } catch (error) {
       console.error(error)
       this.#noHaveError = false
@@ -97,7 +106,7 @@ class ToastAlert {
   }
 
   set canClose(value) {
-    this.#toastElement.classList.toggle('can-close', value)
+    this.#toastElement.classList.toggle('makki-can-close', value)
     if (value)
       this.#toastElement.addEventListener('click', this.#removeBinded)
     else 
@@ -106,7 +115,7 @@ class ToastAlert {
   
   set icon(value) {
     let iconToast = document.createElement('i')
-    iconToast.classList.add('toast-icon')
+    iconToast.classList.add('makki-toast-icon')
     if (this.#statusValue === 'success') {
       iconToast.classList.add('bx')
       iconToast.classList.add('bx-check')
@@ -139,7 +148,7 @@ class ToastAlert {
 
   set position(value) {
     validatePosition(value)
-    const selector = `.toast-container[data-position='${value}']`
+    const selector = `.makki-toast-container[data-position='${value}']`
     const toastContainer = document.querySelector(selector) || createContainer(value)
     if (this.#noHaveError) {
       if (this.#iconElement)
@@ -150,29 +159,23 @@ class ToastAlert {
 
   set showProgress(value) {
     let bgColor
-    this.#toastElement.classList.toggle('progress', value)
-    this.#toastElement.style.setProperty('--progress', 1)
+    this.#toastElement.classList.toggle('makki-progress', value)
+    this.#toastElement.style.setProperty('--makki-progress', 1)
     
     if (this.#statusValue === 'none')
-      bgColor = getComputedStyle(this.#toastElement).getPropertyValue('--toast-bg-color-hover');
-    else if (this.#statusValue === 'success' & this.#darkModeValue)
-      bgColor = '#34884f'
-    else if (this.#statusValue === 'success' & !this.#darkModeValue)
-      bgColor = '#54c477'
-    else if (this.#statusValue === 'warning' & this.#darkModeValue)
-      bgColor = '#be802a'
-    else if (this.#statusValue === 'warning' & !this.#darkModeValue)
-      bgColor = '#EEC476'
-    else if (this.#statusValue === 'danger' & this.#darkModeValue)
-      bgColor = '#AD3939'
-    else if (this.#statusValue === 'danger' & !this.#darkModeValue)
-      bgColor = '#E68686'
+      bgColor = getComputedStyle(this.#toastElement).getPropertyValue('--makki-toast-bg-color-hover');
+    else if (this.#statusValue === 'success')
+      bgColor = '#38A95C'
+    else if (this.#statusValue === 'warning')
+      bgColor = '#ECC94B'
+    else if (this.#statusValue === 'danger')
+      bgColor = '#D74B4B'
 
-    this.#toastElement.style.setProperty('--progress-bg', bgColor)
+    this.#toastElement.style.setProperty('--makki-progress-bg', bgColor)
     if (value) {
       this.#progressInterval = setInterval(() => {
         const timeVisible = new Date() - this.#visibleTimeSince
-        this.#toastElement.style.setProperty('--progress', 1 - timeVisible / this.#autoClose)
+        this.#toastElement.style.setProperty('--makki-progress', 1 - timeVisible / this.#autoClose)
       }, 10)
     }
   }
@@ -181,7 +184,7 @@ class ToastAlert {
     clearTimeout(this.#autoCloseInterval)
     clearInterval(this.#progressInterval)
     const toastContainer = this.#toastElement.parentElement
-    this.#toastElement.classList.add('close')
+    this.#toastElement.classList.add('makki-close')
     this.#toastElement.addEventListener('transitionend', () => {
       this.#toastElement.remove()
       if (toastContainer.hasChildNodes()) return
@@ -190,26 +193,28 @@ class ToastAlert {
   }
 }
 
-function validatePosition(position) {
-  const positions = ['top-right', 'top-left', 'top-center', 'bottom-right', 'bottom-left', 'bottom-center']
-  if (!positions.includes(position))
-    throw new Error('toast position is wrong')
-  return
+function createContainer(position) {
+  validatePosition(position)
+  const container = document.createElement('div')
+  container.classList.add('makki-toast-container')
+  container.dataset.position = position
+  document.body.append(container)
+  return container
 }
 
-function validateStatus(status) {
-  const styles = ['success', 'warning', 'danger', 'none']
-  if (!styles.includes(status.toLowerCase()))
-    throw new Error('toast status is wrong')
-  return
-}
+function getHex(or, og, ob) {
+  let r = or.toString(16)
+  let g = og.toString(16)
+  let b = ob.toString(16)
 
-function validateBackgroundColor(value) {
-  if (value.length > 7 || value.charAt(0) != '#')
-    throw new Error('toast background color hex format is wrong')
-  if (!/^#[0-9A-F]{6}$/i.test(value))
-    throw new Error('toast background color hex code is wrong')
-  return
+  if (r.length == 1)
+    r = "0" + r
+  if (g.length == 1)
+    g = "0" + g
+  if (b.length == 1)
+    b = "0" + b
+
+  return "#" + r + g + b
 }
 
 function getRBGColor(color) {
@@ -230,57 +235,53 @@ function getTextColor(bgColor) {
     return Math.pow((col + 0.055) / 1.055, 2.4)
   })
   let l = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2])
-  return (l > 0.179) ? '#2D3748' : '#EDF2F7'
+  return (l > 0.279) ? '#050505' : '#EDF2F7'
 }
 
-function calcHSL(bgColor, darkMode, textColor) {
+function calcTintColor(or,og,ob) {
+  const r = or + Math.round((255 - or) * 0.25)
+  const g = og + Math.round((255 - og) * 0.25)
+  const b = ob + Math.round((255 - ob) * 0.25)
+  return { r, g, b }
+}
+
+function calcShadeColor(or,og,ob) {
+  const r = Math.round(or * 0.8)
+  const g = Math.round(og * 0.8)
+  const b = Math.round(ob * 0.8)
+  return { r, g, b }
+}
+
+function calcHexColor(bgColor, darkMode) {
   let color = getRBGColor(bgColor)
-  color.r /= 255
-  color.g /= 255
-  color.b /= 255
-
-  let cmin = Math.min(color.r, color.g, color.b),
-      cmax = Math.max(color.r, color.g, color.b),
-      delta = cmax - cmin,
-      h = 0,
-      s = 0,
-      l = 0
-
-  if (delta == 0)
-    h = 0
-  else if (cmax == color.r)
-    h = ((color.g - color.b) / delta) % 6
-  else if (cmax == color.g)
-    h = (color.b - color.r) / delta + 2
-  else
-    h = (color.r - color.g) / delta + 4
-  h = Math.round(h * 60)
-  if (h < 0)
-    h += 360
-
-  l = (cmax + cmin) / 2
-  s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
-
-  s = +(s * 100).toFixed(1)
-  l = +(l * 100).toFixed(1)
-
+  
   if (darkMode)
-    l = (l - 10) < 0 ? 0 : l - 10
-  else {
-    if (textColor == '#EDF2F7')
-      l = (l + 38) > 62 ? 62 : l + 38
-    else 
-      l = (l + 38) > 90 ? 90 : l + 38
-  }
-    
-  return 'hsl(' + h + ',' + s + '%,' + l + '%)'
+    Object.assign(color, calcShadeColor(color.r, color.g, color.b));
+  else 
+    Object.assign(color, calcTintColor(color.r, color.g, color.b));
+  
+  return getHex(color.r, color.g, color.b)
 }
 
-function createContainer(position) {
-  validatePosition(position)
-  const container = document.createElement('div')
-  container.classList.add('toast-container')
-  container.dataset.position = position
-  document.body.append(container)
-  return container
+function validateBackgroundColor(value) {
+  if (value.length > 7 || value.charAt(0) != '#')
+    throw new Error('toast background color hex format is wrong')
+  if (!/^#[0-9A-F]{6}$/i.test(value))
+    throw new Error('toast background color hex code is wrong')
+  return
 }
+
+function validatePosition(position) {
+  const positions = ['top-right', 'top-left', 'top-center', 'bottom-right', 'bottom-left', 'bottom-center']
+  if (!positions.includes(position))
+    throw new Error('toast position is wrong')
+  return
+}
+
+function validateStatus(status) {
+  const styles = ['success', 'warning', 'danger', 'none']
+  if (!styles.includes(status.toLowerCase()))
+    throw new Error('toast status is wrong')
+  return
+}
+

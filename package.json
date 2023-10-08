@@ -1,13 +1,13 @@
 {
-  "name": "dj-alert",
+  "name": "makki-toast",
   "version": "1.0.0",
-  "description": "Fancy alerts",
+  "description": "Fancy makki toast",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "Alerts"
+    "Toast"
   ],
   "author": "Daniel Jimenez",
   "license": "ISC"
