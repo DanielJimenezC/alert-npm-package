@@ -1,14 +1,19 @@
 {
   "name": "makki-toast",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Fancy makki toast",
+  "author": "Daniel Jimenez <danieljimenezcanales@gmail.com>",
+  "homepage": "https://daniel-jimenez.tech/makki-toast/",
+  "license": "MIT",
+  "repository": "DanielJimenezC/makki-toast-package",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "Toast"
-  ],
-  "author": "Daniel Jimenez",
-  "license": "ISC"
+    "alert",
+    "notification",
+    "react",
+    "toast" 
+  ]  
 }

@@ -239,9 +239,9 @@ function getTextColor(bgColor) {
 }
 
 function calcTintColor(or,og,ob) {
-  const r = or + Math.round((255 - or) * 0.25)
-  const g = og + Math.round((255 - og) * 0.25)
-  const b = ob + Math.round((255 - ob) * 0.25)
+  const r = or + Math.round((255 - or) * 0.18)
+  const g = og + Math.round((255 - og) * 0.18)
+  const b = ob + Math.round((255 - ob) * 0.18)
   return { r, g, b }
 }
 
