@@ -151,6 +151,22 @@
   opacity: 1;
 }
 
+.makki-info.makki-light-toast {
+  background-color: #2768A5;
+  color: #EDF2F7;
+}
+
+.makki-info.makki-dark-toast {
+  background-color: #5A9BD8;
+  color: #EDF2F7;
+}
+
+.makki-info.makki-light-toast:hover,
+.makki-info.makki-dark-toast:hover {
+  background-color: #3182CE;
+  opacity: 1;
+}
+
 .makki-light-toast.makki-none,
 .makki-dark-toast.makki-none {
   background-color: var(--makki-toast-bg-color);

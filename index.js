@@ -16,7 +16,43 @@ const DEFAULT_VALUES = {
 
 export class Toast {
   show(options) {
-    new ToastAlert(options);
+    new ToastAlert(options)
+  }
+  info(message, theme) {
+    new ToastAlert({
+      autoClose: 5000,
+      darkMode: theme,
+      message: message,
+      status: 'info',
+      position: 'top-right'
+    })
+  }
+  success(message, theme) {
+    new ToastAlert({
+      autoClose: 5000,
+      darkMode: theme,
+      message: message,
+      status: 'success',
+      position: 'top-right'
+    })
+  }
+  warning(message, theme) {
+    new ToastAlert({
+      autoClose: 5000,
+      darkMode: theme,
+      message: message,
+      status: 'warning',
+      position: 'top-right'
+    })
+  }
+  danger(message, theme) {
+    new ToastAlert({
+      autoClose: 5000,
+      darkMode: theme,
+      message: message,
+      status: 'danger',
+      position: 'top-right'
+    })
   }
 }
 
@@ -69,6 +105,8 @@ class ToastAlert {
         this.#toastElement.classList.add('makki-warning')
       else if (value === 'danger')
         this.#toastElement.classList.add('makki-danger')
+      else if (value === 'info')
+        this.#toastElement.classList.add('makki-info')
       else if (value === 'none')
         this.#toastElement.classList.add('makki-none')
     } catch (error) {
@@ -128,7 +166,12 @@ class ToastAlert {
     }
     else if (this.#statusValue === 'danger') {
       iconToast.classList.add('bx')
-      iconToast.classList.add('bx-error-alt')
+      iconToast.classList.add('bx-x')
+      this.#iconElement = iconToast
+    }
+    else if (this.#statusValue === 'info') {
+      iconToast.classList.add('bx')
+      iconToast.classList.add('bx-info-circle')
       this.#iconElement = iconToast
     }
     else if (this.#statusValue === 'none') {
@@ -170,6 +213,8 @@ class ToastAlert {
       bgColor = '#ECC94B'
     else if (this.#statusValue === 'danger')
       bgColor = '#D74B4B'
+    else if (this.#statusValue === 'info')
+      bgColor = '#3182CE'
 
     this.#toastElement.style.setProperty('--makki-progress-bg', bgColor)
     if (value) {
@@ -279,7 +324,7 @@ function validatePosition(position) {
 }
 
 function validateStatus(status) {
-  const styles = ['success', 'warning', 'danger', 'none']
+  const styles = ['success', 'warning', 'danger', 'info', 'none']
   if (!styles.includes(status.toLowerCase()))
     throw new Error('toast status is wrong')
   return
