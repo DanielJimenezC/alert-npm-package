@@ -1,4 +1,4 @@
-<a href="https://daniel-jimenez.tech/makki-toast/"><img alt="makki toast - Try it" src="https://daniel-jimenez.tech/images/makkitoast.png"/></a>
+<a href="https://danieljimenezc.github.io/makki-toast/MakkiHeader.png"><img alt="makki toast - Try it" src="https://danieljimenezc.github.io/makki-toast/MakkiHeader.png"/></a>
 <div align="center">
   <img src="https://badgen.net/npm/v/makki-toast" alt="NPM Version" />
   <img src="https://img.shields.io/bundlephobia/minzip/makki-toast" alt="Minzip size"/>
@@ -13,9 +13,9 @@
 <div align="center">Easy to use, customizable & compatible with dark mode.</div>
 <br />
 <div align="center">
-  <a href="https://daniel-jimenez.tech/makki-toast/">Website</a> 
+  <a href="https://danieljimenezc.github.io/makki-toast/">Website</a> 
   <span> · </span>
-  <a href="https://daniel-jimenez.tech/makki-toast/#/docs">Documentation</a> 
+  <a href="https://danieljimenezc.github.io/makki-toast/#/docs">Documentation</a> 
 </div>
 <br />
 <div align="center">
@@ -108,4 +108,4 @@ const App = () => {
 
 ## Documentation
 
-Find the full documentation on [official documentation](https://daniel-jimenez.tech/makki-toast/#/docs)
+Find the full documentation on [official documentation](https://danieljimenezc.github.io/makki-toast/#/docs)

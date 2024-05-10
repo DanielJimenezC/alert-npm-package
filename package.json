@@ -1,9 +1,9 @@
 {
   "name": "makki-toast",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Easy to use and customizable toast",
   "author": "Daniel Jimenez <danieljimenezcanales@gmail.com>",
-  "homepage": "https://daniel-jimenez.tech/makki-toast/",
+  "homepage": "https://danieljimenezc.github.io/makki-toast/",
   "license": "MIT",
   "repository": "DanielJimenezC/makki-toast-package",
   "main": "index.js",
